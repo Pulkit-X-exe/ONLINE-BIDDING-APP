@@ -127,8 +127,22 @@ const refreshToken = async (req, res, next) => {
   }
 };
 
+const getUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  refreshToken
+  refreshToken,
+  getUserProfile
 };
