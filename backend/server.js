@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const auctionRoutes = require('./routes/auctionRoutes');
+const bidRoutes = require('./routes/bidRoutes');
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get('/api/test', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auctions', auctionRoutes);
+app.use('/api/bids', bidRoutes);
 
 app.use(errorHandler);
 
