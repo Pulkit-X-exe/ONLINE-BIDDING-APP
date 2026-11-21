@@ -3,6 +3,7 @@ const http = require('http');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const { errorHandler } = require('./middleware/errorMiddleware');
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.get('/api/test', (req, res) => {
   res.json({ message: 'BidZone API is running' });
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
