@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('userInfo'));
 
   const handleLogout = () => {
-    localStorage.removeItem('userInfo');
+    logout();
     navigate('/login');
   };
 
@@ -19,7 +20,7 @@ function Navbar() {
         <div className="nav-links">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/auctions" className="nav-link">Auctions</Link>
-          
+
           {user ? (
             <>
               {user.role === 'seller' && (
@@ -35,7 +36,7 @@ function Navbar() {
               )}
 
               {user.role === 'admin' && (
-                <Link to="/admin-dashboard" className="nav-link">Admin</Link>
+                <Link to="/admin-dashboard" className="nav-link">Admin Panel</Link>
               )}
 
               <span className="user-badge">{user.name} ({user.role})</span>
