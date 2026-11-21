@@ -8,6 +8,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const auctionRoutes = require('./routes/auctionRoutes');
 const bidRoutes = require('./routes/bidRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const { closeExpiredAuctions } = require('./controllers/auctionController');
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.get('/api/test', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/bids', bidRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(errorHandler);
 
