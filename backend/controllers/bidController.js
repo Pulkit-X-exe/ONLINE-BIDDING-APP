@@ -66,6 +66,15 @@ const placeBid = async (req, res, next) => {
 
     const populatedBid = await Bid.findById(bid._id).populate('bidder', 'name email');
 
+    const io = req.app.get('io');
+    if (io) {
+      io.to(auctionId).emit('bidUpdated', {
+        auctionId,
+        currentPrice: updatedAuction.currentPrice,
+        bid: populatedBid
+      });
+    }
+
     res.status(201).json({
       bid: populatedBid,
       auction: updatedAuction

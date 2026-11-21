@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
@@ -14,6 +15,25 @@ connectDB();
 
 const app = express();
 const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  socket.on('joinAuction', (auctionId) => {
+    socket.join(auctionId);
+  });
+
+  socket.on('leaveAuction', (auctionId) => {
+    socket.leave(auctionId);
+  });
+});
 
 app.use(cors());
 app.use(express.json());
