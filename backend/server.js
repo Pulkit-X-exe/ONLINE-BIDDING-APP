@@ -8,6 +8,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const auctionRoutes = require('./routes/auctionRoutes');
 const bidRoutes = require('./routes/bidRoutes');
+const { closeExpiredAuctions } = require('./controllers/auctionController');
 
 dotenv.config();
 
@@ -34,6 +35,10 @@ io.on('connection', (socket) => {
     socket.leave(auctionId);
   });
 });
+
+setInterval(() => {
+  closeExpiredAuctions(io);
+}, 5000);
 
 app.use(cors());
 app.use(express.json());

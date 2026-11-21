@@ -1,6 +1,37 @@
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
 
+const closeExpiredAuctions = async (io) => {
+  try {
+    const expiredAuctions = await Auction.find({
+      endTime: { $lte: new Date() },
+      status: 'Active'
+    });
+
+    for (const auction of expiredAuctions) {
+      const highestBid = await Bid.findOne({ auction: auction._id }).sort({ amount: -1 });
+
+      if (highestBid) {
+        auction.winner = highestBid.bidder;
+        auction.currentPrice = highestBid.amount;
+      }
+
+      auction.status = 'Ended';
+      await auction.save();
+
+      if (io) {
+        io.to(auction._id.toString()).emit('auctionEnded', {
+          auctionId: auction._id,
+          winner: auction.winner,
+          finalPrice: auction.currentPrice
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error closing expired auctions:', error.message);
+  }
+};
+
 const createAuction = async (req, res, next) => {
   try {
     const { title, description, image, category, startingPrice, endTime } = req.body;
@@ -43,10 +74,8 @@ const getAuctions = async (req, res, next) => {
   try {
     const { search, category, status } = req.query;
 
-    await Auction.updateMany(
-      { endTime: { $lte: new Date() }, status: 'Active' },
-      { $set: { status: 'Ended' } }
-    );
+    const io = req.app.get('io');
+    await closeExpiredAuctions(io);
 
     const filter = {};
 
@@ -85,8 +114,24 @@ const getAuctionById = async (req, res, next) => {
     }
 
     if (auction.status === 'Active' && new Date(auction.endTime) <= new Date()) {
+      const highestBid = await Bid.findOne({ auction: auction._id }).sort({ amount: -1 });
+      if (highestBid) {
+        auction.winner = highestBid.bidder;
+        auction.currentPrice = highestBid.amount;
+      }
       auction.status = 'Ended';
       await auction.save();
+
+      const io = req.app.get('io');
+      if (io) {
+        io.to(auction._id.toString()).emit('auctionEnded', {
+          auctionId: auction._id,
+          winner: auction.winner,
+          finalPrice: auction.currentPrice
+        });
+      }
+
+      await auction.populate('winner', 'name email');
     }
 
     res.json(auction);
@@ -190,6 +235,7 @@ const getMyAuctions = async (req, res, next) => {
 };
 
 module.exports = {
+  closeExpiredAuctions,
   createAuction,
   getAuctions,
   getAuctionById,
