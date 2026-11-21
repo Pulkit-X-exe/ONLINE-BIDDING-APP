@@ -1,0 +1,358 @@
+{
+  "info": {
+    "name": "BidZone - Online Auction Platform",
+    "description": "Complete Postman collection for BidZone API covering Authentication, Auction Management, Live Bidding, Bid History, and Admin Dashboard with MongoDB Aggregation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "auctionId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register Bidder",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Bidder\",\n  \"email\": \"john_bidder@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"bidder\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Seller",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Seller\",\n  \"email\": \"alice_seller@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"seller\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john_bidder@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<YOUR_REFRESH_TOKEN_HERE>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Get User Profile (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Auctions",
+      "item": [
+        {
+          "name": "Create Auction (Seller)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sony PlayStation 5 Console\",\n  \"description\": \"Brand new 825GB disc edition with DualSense controller\",\n  \"image\": \"https://images.unsplash.com/photo-1606813907291-d86efa9b94db\",\n  \"category\": \"Electronics\",\n  \"startingPrice\": 450,\n  \"endTime\": \"2026-12-01T18:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions"]
+            }
+          }
+        },
+        {
+          "name": "Get All Auctions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auctions?search=Sony&category=Electronics&status=Active",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions"],
+              "query": [
+                { "key": "search", "value": "Sony" },
+                { "key": "category", "value": "Electronics" },
+                { "key": "status", "value": "Active" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Auction By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{auctionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions", "{{auctionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get My Auctions (Seller)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auctions/my-auctions",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions", "my-auctions"]
+            }
+          }
+        },
+        {
+          "name": "Update Auction (Seller)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sony PlayStation 5 Console (Updated)\",\n  \"startingPrice\": 480\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{auctionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions", "{{auctionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Auction (Seller)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auctions/{{auctionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["auctions", "{{auctionId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Bids",
+      "item": [
+        {
+          "name": "Place Valid Bid",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"auctionId\": \"{{auctionId}}\",\n  \"amount\": 520\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids"]
+            }
+          }
+        },
+        {
+          "name": "Place Invalid Low Bid (Fail Case)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"auctionId\": \"{{auctionId}}\",\n  \"amount\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids"]
+            }
+          }
+        },
+        {
+          "name": "Get Auction Bid History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bids/auction/{{auctionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids", "auction", "{{auctionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get My Placed Bids",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bids/my-bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids", "my-bids"]
+            }
+          }
+        },
+        {
+          "name": "Get My Won Auctions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bids/my-won-auctions",
+              "host": ["{{baseUrl}}"],
+              "path": ["bids", "my-won-auctions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Admin & Aggregation",
+      "item": [
+        {
+          "name": "Get Admin Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Get Category-Wise Sales (Aggregation)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/category-sales",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "category-sales"]
+            }
+          }
+        },
+        {
+          "name": "Get All Registered Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get All Platform Bids",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/bids",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "bids"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
