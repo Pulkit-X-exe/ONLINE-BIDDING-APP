@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
+const authRoutes = require('./routes/authRoutes');
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ app.use(express.json());
 app.get('/api/test', (req, res) => {
   res.json({ message: 'BidZone API is running' });
 });
+
+app.use('/api/auth', authRoutes);
 
 app.use(errorHandler);
 
