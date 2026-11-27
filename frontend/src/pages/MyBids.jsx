@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 function MyBids() {
   const [bids, setBids] = useState([]);
@@ -14,7 +15,7 @@ function MyBids() {
 
   const fetchBidderData = async () => {
     try {
-      const bidsRes = await fetch('http://localhost:5000/api/bids/my-bids', {
+      const bidsRes = await fetch(`${API_URL}/api/bids/my-bids`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`
         }
@@ -22,7 +23,7 @@ function MyBids() {
       const bidsData = await bidsRes.json();
       setBids(bidsData);
 
-      const wonRes = await fetch('http://localhost:5000/api/bids/my-won-auctions', {
+      const wonRes = await fetch(`${API_URL}/api/bids/my-won-auctions`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`
         }

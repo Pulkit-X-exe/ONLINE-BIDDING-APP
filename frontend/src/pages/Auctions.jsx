@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../config';
 
 function Auctions() {
   const [auctions, setAuctions] = useState([]);
@@ -19,7 +20,7 @@ function Auctions() {
       if (category) queryParams.append('category', category);
       if (status) queryParams.append('status', status);
 
-      const response = await fetch(`http://localhost:5000/api/auctions?${queryParams.toString()}`);
+      const response = await fetch(`${API_URL}/api/auctions?${queryParams.toString()}`);
       const data = await response.json();
       setAuctions(data);
     } catch (error) {

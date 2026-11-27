@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 function AuctionDetails() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ function AuctionDetails() {
   useEffect(() => {
     fetchAuctionData();
 
-    const socket = io('http://localhost:5000');
+    const socket = io(API_URL);
 
     socket.emit('joinAuction', id);
 
@@ -81,11 +82,11 @@ function AuctionDetails() {
 
   const fetchAuctionData = async () => {
     try {
-      const aucRes = await fetch(`http://localhost:5000/api/auctions/${id}`);
+      const aucRes = await fetch(`${API_URL}/api/auctions/${id}`);
       const aucData = await aucRes.json();
       setAuction(aucData);
 
-      const bidsRes = await fetch(`http://localhost:5000/api/bids/auction/${id}`);
+      const bidsRes = await fetch(`${API_URL}/api/bids/auction/${id}`);
       const bidsData = await bidsRes.json();
       setBids(bidsData);
     } catch (err) {
@@ -117,7 +118,7 @@ function AuctionDetails() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/bids', {
+      const response = await fetch(`${API_URL}/api/bids`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

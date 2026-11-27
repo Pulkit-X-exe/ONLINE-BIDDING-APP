@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 function MyAuctions() {
   const [auctions, setAuctions] = useState([]);
@@ -14,7 +15,7 @@ function MyAuctions() {
 
   const fetchMyAuctions = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auctions/my-auctions', {
+      const response = await fetch(`${API_URL}/api/auctions/my-auctions`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`
         }
@@ -34,7 +35,7 @@ function MyAuctions() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auctions/${id}`, {
+      const response = await fetch(`${API_URL}/api/auctions/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${user.accessToken}`

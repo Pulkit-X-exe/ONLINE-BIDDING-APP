@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -18,15 +19,15 @@ function AdminDashboard() {
     try {
       const headers = { Authorization: `Bearer ${user.accessToken}` };
 
-      const dashRes = await fetch('http://localhost:5000/api/admin/dashboard', { headers });
+      const dashRes = await fetch(`${API_URL}/api/admin/dashboard`, { headers });
       const dashData = await dashRes.json();
       setStats(dashData);
 
-      const usersRes = await fetch('http://localhost:5000/api/admin/users', { headers });
+      const usersRes = await fetch(`${API_URL}/api/admin/users`, { headers });
       const usersData = await usersRes.json();
       setUsers(usersData);
 
-      const bidsRes = await fetch('http://localhost:5000/api/admin/bids', { headers });
+      const bidsRes = await fetch(`${API_URL}/api/admin/bids`, { headers });
       const bidsData = await bidsRes.json();
       setBids(bidsData);
     } catch (error) {
@@ -40,7 +41,7 @@ function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+      const response = await fetch(`${API_URL}/api/admin/users/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${user.accessToken}` }
       });
